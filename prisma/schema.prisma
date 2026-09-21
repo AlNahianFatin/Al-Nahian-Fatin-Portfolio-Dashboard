@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Profile {
+  id               String   @id @default(uuid())
+  name             String
+  title            String
+  shortBio         String?
+  aboutTitle       String?
+  aboutDescription String?
+  profileImage     String?
+  location         String?
+  availability     String?
+  email            String?
+  phone            String?
+  updatedAt        DateTime @updatedAt
+}
+
+model SocialLink {
+  id        String   @id @default(uuid())
+  platform  String
+  label     String?
+  url       String
+  icon      String?
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Education {
+  id          String    @id @default(uuid())
+  institution String
+  degree      String
+  field       String?
+  startDate   DateTime?
+  endDate     DateTime?
+  description String?
+  location    String?
+  sortOrder   Int       @default(0)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Skill {
+  id        String   @id @default(uuid())
+  name      String
+  category  String?
+  level     Int?
+  icon      String?
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id           String   @id @default(uuid())
+  title        String
+  description  String?
+  image        String?
+  githubUrl    String?
+  liveUrl      String?
+  technologies String[]
+  featured     Boolean  @default(false)
+  sortOrder    Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Publication {
+  id              String    @id @default(uuid())
+  title           String
+  description     String?
+  publisher       String?
+  publicationDate DateTime?
+  url             String?
+  image           String?
+  sortOrder       Int       @default(0)
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Resume {
+  id         String   @id @default(uuid())
+  title      String
+  fileUrl    String
+  fileName   String?
+  isActive   Boolean  @default(true)
+  uploadedAt DateTime @default(now())
+}
+
+model PortfolioSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id        String    @id @default(uuid())
+  gmail     String
+  message   String
+  isRead    Boolean   @default(false)
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([gmail])
+  @@index([isRead])
+  @@index([createdAt])
+}
+
+model View {
+  id        String   @id @default(uuid())
+  date      DateTime @default(now())
+  ipHash    String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([date])
+}
