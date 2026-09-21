@@ -71,7 +71,8 @@ export default function ContentEditor() {
     if (r.ok) {
       setForm({});
       setEditing(null);
-      load()
+
+      load();
     }
   }
 
@@ -83,7 +84,7 @@ export default function ContentEditor() {
         x[k] = new Date(x[k]).toISOString().slice(0, 10);
 
     setForm(x);
-    setEditing(row.id)
+    setEditing(row.id);
   }
 
   async function remove(id: string) {

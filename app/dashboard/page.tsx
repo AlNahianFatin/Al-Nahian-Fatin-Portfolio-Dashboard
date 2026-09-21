@@ -52,14 +52,6 @@ async function stats() {
 }
 export default async function Dashboard() {
   const s = await stats();
-  // const cards = [
-  //   ["Views · 7 Days", s.v7, Activity],
-  //   ["Views · 15 Days", s.v15, Activity],
-  //   ["Total Views", s.views, Eye],
-  //   ["Messages · 7 Days", s.m7, MessageSquare],
-  //   ["Messages · 15 Days", s.m15, MessageSquare],
-  //   ["Total Messages", s.messages, Mail]
-  // ];
 
   const cards: [string, number, LucideIcon][] = [
     ["Views · 7 Days", s.v7, Activity],

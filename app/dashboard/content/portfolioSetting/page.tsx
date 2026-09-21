@@ -41,7 +41,7 @@ export default function SettingsContent() {
 
                 <form onSubmit={save} className="panel p-6">
 
-                    <input value={key} onChange={e => setKey(e.target.value)} placeholder="setting key"
+                    <input value={key} disabled onChange={e => setKey(e.target.value)} placeholder="setting key"
                         className="w-full rounded-xl border p-3" />
                     <textarea value={value} onChange={e => setValue(e.target.value)} placeholder="setting value"
                         className="mt-3 min-h-32 w-full rounded-xl border p-3" />

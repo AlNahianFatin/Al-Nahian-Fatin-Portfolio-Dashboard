@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: `${process.env.ADMIN_NAME || "User name"} portfolio dashboard`,
   description: `Portfolio management dashboard of ${process.env.ADMIN_NAME || "User name"}.`,
   icons: {
-    icon: "/PortfolioLogo.svg",
+    icon: "/PortfolioDashboardLogo.svg",
   },
 };
 

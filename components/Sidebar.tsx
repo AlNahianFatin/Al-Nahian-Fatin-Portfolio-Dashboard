@@ -20,9 +20,10 @@ const groups = [
 export function Sidebar() {
   return (
     <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-slate-200 bg-white p-4 lg:block">
-      <div className="px-3 py-4 text-xl font-black">ANF
+      <div className="px-3 py-4 text-xl font-black">ANF Portfolio
         <span className="text-indigo-600">.</span> Admin
       </div>
+
       <nav className="mt-4 space-y-1">
         {
           groups.map(([name, href, Icon]) =>
@@ -32,6 +33,7 @@ export function Sidebar() {
             </Link>)
         }
       </nav>
+
       <button onClick={
         async () => {
           await fetch("/api/auth/logout", {
