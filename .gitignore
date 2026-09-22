@@ -46,4 +46,3 @@ next-env.d.ts
 
 # development files
 .vscode
-/prisma/migrations/*
