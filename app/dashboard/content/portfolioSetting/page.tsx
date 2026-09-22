@@ -1,11 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function SettingsContent() {
     const [rows, setRows] = useState<any[]>([]);
     const [key, setKey] = useState("");
     const [value, setValue] = useState("");
+    const [errors, setErrors] = useState<Record<string, string>>({});
     const [editing, setEditing] = useState<string | null>(null);
+    const [status, setStatus] = useState("");
 
     const load = () => fetch("/api/content/portfolioSetting")
         .then(r => r.json())
@@ -15,21 +18,51 @@ export default function SettingsContent() {
         load()
     }, []);
 
-    async function save(e: React.FormEvent) {
-        e.preventDefault();
-
-        const body = editing ? { id: editing, key, value } : { key, value };
-
-        await fetch("/api/content/portfolioSetting", {
-            method: editing ? "PUT" : "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body)
-        });
-
+    function clearForm() {
         setKey("");
         setValue("");
         setEditing(null);
+        setErrors({});
+        setStatus("");
+    }
 
+    async function save(e: any) {
+        e.preventDefault();
+        setErrors({});
+
+        if (!key) {
+            setErrors({ key: "Key is required" });
+            toast.error("Key is required");
+            return;
+        }
+
+        setStatus("Saving...");
+
+        const formData = new FormData();
+        formData.append("key", key);
+        formData.append("value", value);
+        if (editing)
+            formData.append("id", editing);
+
+        const r = await fetch("/api/content/portfolioSetting", {
+            method: "PUT",
+            body: formData
+        });
+
+        const d = await r.json();
+        if (!r.ok) {
+            if (d.field) {
+                setErrors({ [d.field]: d.message });
+                toast.error(d.message);
+            } else {
+                setStatus(d.message || "Something went wrong");
+                toast.error(d.message || "Something went wrong");
+            }
+            return;
+        }
+
+        toast.success(d.message || "Saved successfully");
+        clearForm();
         load();
     }
 
@@ -40,16 +73,37 @@ export default function SettingsContent() {
             <div className="mt-6 grid gap-6 lg:grid-cols-2">
 
                 <form onSubmit={save} className="panel p-6">
+                    <label className="block text-sm font-medium">
+                        Setting key
+                        <input value={key} onChange={e => setKey(e.target.value)} placeholder="setting key"
+                            disabled
+                            className={`mt-1 w-full rounded-xl border p-3 outline-none bg-slate-50 text-slate-500 cursor-not-allowed ${errors.key ? "border-red-500" : "border-slate-200"}`} />
+                        {
+                            errors.key &&
+                            <p className="mt-1 text-xs text-red-600">{errors.key}</p>
+                        }
+                    </label>
+                    <label className="mt-4 block text-sm font-medium">
+                        Setting value (optional)
+                        <textarea value={value} onChange={e => setValue(e.target.value)} placeholder="setting value"
+                            className={`mt-1 min-h-32 w-full rounded-xl border p-3 outline-none ${errors.value ? "border-red-500" : "border-slate-200"}`} />
+                        {
+                            errors.value &&
+                            <p className="mt-1 text-xs text-red-600">{errors.value}</p>
+                        }
+                    </label>
 
-                    <input value={key} disabled onChange={e => setKey(e.target.value)} placeholder="setting key"
-                        className="w-full rounded-xl border p-3" />
-                    <textarea value={value} onChange={e => setValue(e.target.value)} placeholder="setting value"
-                        className="mt-3 min-h-32 w-full rounded-xl border p-3" />
-
-                    <button className="mt-3 rounded-xl bg-indigo-600 px-5 py-2.5 font-semibold text-white">
-                        {editing ? "Update" : "Add"} setting
-                    </button>
-
+                    <div className="mt-5 flex gap-2">
+                        {editing && (
+                            <>
+                                <button className="rounded-xl bg-indigo-600 px-5 py-2.5 font-semibold text-white">
+                                    Update setting
+                                </button>
+                                <button type="button" onClick={clearForm} className="rounded-xl border px-5 py-2.5 font-semibold text-slate-600">Clear</button>
+                            </>
+                        )}
+                    </div>
+                    <p className="mt-3 text-sm text-slate-500">{status}</p>
                 </form>
 
                 <div className="space-y-3">
@@ -61,14 +115,20 @@ export default function SettingsContent() {
                                         <b>{r.key}</b>
                                         <p className="mt-1 text-sm text-slate-500">{r.value}</p>
                                     </div>
-                                    <button onClick={() => { setEditing(r.id); setKey(r.key); setValue(r.value) }}
-                                        className="rounded-lg border px-3 py-1.5 text-sm">Edit</button>
+                                    <div className="flex gap-2">
+                                        <button onClick={() => { setEditing(r.id); setKey(r.key); setValue(r.value) }}
+                                            className="rounded-lg border px-3 py-1.5 text-sm">Edit</button>
+                                    </div>
                                 </div>
                             </div>
                         )
                     }
                 </div>
             </div>
+
+            {
+                // Delete modal removed as per request
+            }
         </main>
     )
 }

@@ -1,65 +1,57 @@
+"use client";
+
 import { Activity, Eye, Mail, MessageSquare, type LucideIcon } from "lucide-react";
-import { prisma } from "../../lib/prisma";
+import { useMessages } from "../../components/MessageContext";
+import { useEffect, useState } from "react";
 
-async function stats() {
-  const now = new Date();
+export default function Dashboard() {
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-  const d7 = new Date(now);
-  d7.setDate(now.getDate() - 7);
-
-  const d15 = new Date(now);
-  d15.setDate(now.getDate() - 15);
-
-  const [views, messages, unread, v7, v15, m7, m15] = await Promise.all([
-    prisma.view.count(),
-
-    prisma.message.count(),
-
-    prisma.message.count({
-      where: { isRead: false }
-    }),
-
-    prisma.view.count({
-      where: {
-        createdAt: { gte: d7 }
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const r = await fetch("/api/dashboard/stats");
+        const d = await r.json();
+        setStats(d);
+      } catch (e) {
+        console.error("Failed to fetch stats", e);
+      } finally {
+        setLoading(false);
       }
-    }),
+    }
+    fetchStats();
+  }, []);
 
-    prisma.view.count({
-      where: {
-        createdAt: { gte: d15 }
-      }
-    }),
+  if (loading) {
+    return (
+      <div className="p-8">
+        <p className="text-slate-500">Loading dashboard stats...</p>
+      </div>
+    );
+  }
 
-    prisma.message.count({
-      where: {
-        createdAt: {
-          gte: d7
-        }
-      }
-    }),
-
-    prisma.message.count({
-      where: {
-        createdAt: {
-          gte: d15
-        }
-      }
-    })
-  ]);
-
-  return { views, messages, unread, v7, v15, m7, m15 };
+  return (
+    <div className="flex flex-col">
+      <DashboardContent stats={stats} />
+    </div>
+  );
 }
-export default async function Dashboard() {
-  const s = await stats();
+
+function DashboardContent({ stats: s }: { stats: any }) {
+  const { unreadCount } = useMessages();
+
+  if (!s) {
+    return <div className="p-8">Error loading statistics.</div>;
+  }
 
   const cards: [string, number, LucideIcon][] = [
-    ["Views · 7 Days", s.v7, Activity],
-    ["Views · 15 Days", s.v15, Activity],
-    ["Total Views", s.views, Eye],
-    ["Messages · 7 Days", s.m7, MessageSquare],
-    ["Messages · 15 Days", s.m15, MessageSquare],
-    ["Total Messages", s.messages, Mail],
+    ["Views · 7 Days", s.v7 || 0, Activity],
+    ["Views · 15 Days", s.v15 || 0, Activity],
+    ["Total Views", s.views || 0, Eye],
+    ["Messages · 7 Days", s.m7 || 0, MessageSquare],
+    ["Messages · 15 Days", s.m15 || 0, MessageSquare],
+    ["Total Messages", s.messages || 0, Mail],
   ];
 
   return (
@@ -83,7 +75,7 @@ export default async function Dashboard() {
       </div>
       <div className="mt-6 panel p-6">
         <h2 className="text-lg font-bold">Unread messages</h2>
-        <p className="mt-2 text-slate-500">{s.unread} message{s.unread !== 1 ? "s" : ""} need your attention.</p>
+        <p className="mt-2 text-slate-500">{unreadCount} message{unreadCount !== 1 ? "s" : ""} need your attention.</p>
       </div>
     </main>
   )

@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Settings() {
     const [currentPass, setCurrentPass] = useState("");
     const [newPass, setNewPass] = useState("");
+    const [showCurrentPass, setShowCurrentPass] = useState(false);
+    const [showNewPass, setShowNewPass] = useState(false);
 
     const [currentPassError, setCurrentPassError] =
         useState("");
@@ -102,20 +105,28 @@ export default function Settings() {
                 {/* Current Password */}
                 <label className="mt-5 block text-sm">
                     Current password
-
-                    <input
-                        required
-                        type="password"
-                        value={currentPass}
-                        onChange={(e) => {
-                            setCurrentPass(e.target.value);
-                            setCurrentPassError("");
-                        }}
-                        className={`mt-1 w-full rounded-xl border px-3 py-2 outline-none ${currentPassError
-                                ? "border-red-500 focus:border-red-500"
-                                : "border-slate-200 focus:border-indigo-500"
-                            }`}
-                    />
+                    <div className="relative mt-1">
+                        <input
+                            required
+                            type={showCurrentPass ? "text" : "password"}
+                            value={currentPass}
+                            onChange={(e) => {
+                                setCurrentPass(e.target.value);
+                                setCurrentPassError("");
+                            }}
+                            className={`w-full rounded-xl border px-3 py-2 pr-10 outline-none ${currentPassError
+                                    ? "border-red-500 focus:border-red-500"
+                                    : "border-slate-200 focus:border-indigo-500"
+                                }`}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowCurrentPass(!showCurrentPass)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        >
+                            {showCurrentPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    </div>
 
                     {currentPassError && (
                         <p className="mt-1 text-sm text-red-600">
@@ -127,21 +138,29 @@ export default function Settings() {
                 {/* New Password */}
                 <label className="mt-4 block text-sm">
                     New password
-
-                    <input
-                        required
-                        minLength={8}
-                        type="password"
-                        value={newPass}
-                        onChange={(e) => {
-                            setNewPass(e.target.value);
-                            setNewPassError("");
-                        }}
-                        className={`mt-1 w-full rounded-xl border px-3 py-2 outline-none ${newPassError
-                                ? "border-red-500 focus:border-red-500"
-                                : "border-slate-200 focus:border-indigo-500"
-                            }`}
-                    />
+                    <div className="relative mt-1">
+                        <input
+                            required
+                            minLength={8}
+                            type={showNewPass ? "text" : "password"}
+                            value={newPass}
+                            onChange={(e) => {
+                                setNewPass(e.target.value);
+                                setNewPassError("");
+                            }}
+                            className={`w-full rounded-xl border px-3 py-2 pr-10 outline-none ${newPassError
+                                    ? "border-red-500 focus:border-red-500"
+                                    : "border-slate-200 focus:border-indigo-500"
+                                }`}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowNewPass(!showNewPass)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        >
+                            {showNewPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    </div>
 
                     {newPassError && (
                         <p className="mt-1 text-sm text-red-600">

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import { requireAdmin } from "../../../../lib/auth";
+import cloudinary from "../../../../lib/cloudinary";
 
 const allowed = ["profile", "education", "skill", "project", "publication", "socialLink", "resume", "portfolioSetting"] as const;
 
@@ -19,9 +20,10 @@ export async function GET(_: Request, { params }: { params: Promise<{ model: str
         if (!allowed.includes(m as Model))
             return NextResponse.json({ message: "Invalid model" }, { status: 400 });
 
+        const orderField = m === 'resume' ? 'uploadedAt' : 'updatedAt';
         const rows = await model(m).findMany({
             orderBy: {
-                updatedAt: "desc"
+                [orderField]: "desc"
             }
         });
 
@@ -41,7 +43,51 @@ export async function POST(req: Request, { params }: { params: Promise<{ model: 
         if (!allowed.includes(m as Model))
             return NextResponse.json({ message: "Invalid model" }, { status: 400 });
 
-        const body = await req.json();
+        const formData = await req.formData();
+        const body: any = {};
+
+        for (const [key, value] of formData.entries()) {
+            if (value instanceof File) {
+                const arrayBuffer = await value.arrayBuffer();
+                const buffer = Buffer.from(arrayBuffer);
+
+                const uploadResponse = await new Promise((resolve, reject) => {
+                    cloudinary.uploader.upload_stream(
+                        { folder: `portfolio/${m}` },
+                        (error, result) => {
+                            if (error) reject(error);
+                            else resolve(result);
+                        }
+                    ).end(buffer);
+                }) as any;
+
+                if (m === 'resume') {
+                    body['fileUrl'] = uploadResponse.secure_url;
+                    body['filePublicId'] = uploadResponse.public_id;
+                } else {
+                    body['imageUrl'] = uploadResponse.secure_url;
+                    body['imagePublicId'] = uploadResponse.public_id;
+                }
+            } else {
+                // Handle Date fields to ensure ISO-8601 format
+                if (["startDate", "endDate", "publicationDate"].includes(key) && value) {
+                    body[key] = new Date(value).toISOString();
+                }
+                // Convert "true"/"false" strings from FormData to actual booleans
+                else if (value === "true") {
+                    body[key] = true;
+                } else if (value === "false") {
+                    body[key] = false;
+                }
+                // Handle sortOrder, level and other integer fields
+                else if (["sortOrder", "level"].includes(key) && value !== "") {
+                    const parsed = parseInt(value, 10);
+                    body[key] = isNaN(parsed) ? 0 : parsed;
+                } else {
+                    body[key] = value;
+                }
+            }
+        }
 
         delete body.id;
 
@@ -61,11 +107,57 @@ export async function PUT(req: Request, { params }: { params: Promise<{ model: s
 
         const { model: m } = await params;
 
-        const body = await req.json();
-        const { id, ...data } = body;
+        const formData = await req.formData();
+        const body: any = {};
+
+        for (const [key, value] of formData.entries()) {
+            if (value instanceof File) {
+                const arrayBuffer = await value.arrayBuffer();
+                const buffer = Buffer.from(arrayBuffer);
+
+                const uploadResponse = await new Promise((resolve, reject) => {
+                    cloudinary.uploader.upload_stream(
+                        { folder: `portfolio/${m}` },
+                        (error, result) => {
+                            if (error) reject(error);
+                            else resolve(result);
+                        }
+                    ).end(buffer);
+                }) as any;
+
+                if (m === 'resume') {
+                    body['fileUrl'] = uploadResponse.secure_url;
+                    body['filePublicId'] = uploadResponse.public_id;
+                } else {
+                    body['imageUrl'] = uploadResponse.secure_url;
+                    body['imagePublicId'] = uploadResponse.public_id;
+                }
+            } else {
+                // Handle Date fields to ensure ISO-8601 format
+                if (["startDate", "endDate", "publicationDate"].includes(key) && value) {
+                    body[key] = new Date(value).toISOString();
+                }
+                // Convert "true"/"false" strings from FormData to actual booleans
+                else if (value === "true") {
+                    body[key] = true;
+                } else if (value === "false") {
+                    body[key] = false;
+                }
+                // Handle sortOrder, level and other integer fields
+                else if (["sortOrder", "level"].includes(key) && value !== "") {
+                    const parsed = parseInt(value, 10);
+                    body[key] = isNaN(parsed) ? 0 : parsed;
+                } else {
+                    body[key] = value;
+                }
+            }
+        }
+
+        const id = body.id;
+        delete body.id;
 
         const row = await model(m).update({
-            where: { id }, data
+            where: { id }, data: body
         });
         return NextResponse.json({ row, message: "Updated successfully" });
     }

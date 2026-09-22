@@ -1,8 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Search, CheckCheck } from "lucide-react";
+import { Search, CheckCheck, Trash2 } from "lucide-react";
+import { useMessages } from "../../../components/MessageContext";
+import { toast } from "sonner";
 
 export default function Messages() {
+    const { markAsRead, markAllAsRead } = useMessages();
     const [rows, setRows] = useState<any[]>([]);
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("all");
@@ -22,23 +25,29 @@ export default function Messages() {
     }, [search, filter]);
 
     async function read(id: string) {
-        await fetch("/api/messages", {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id })
-        });
-
+        await markAsRead(id);
         load()
     }
 
     async function all() {
-        await fetch("/api/messages", {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ all: true })
-        });
-
+        await markAllAsRead();
         load()
+    }
+
+    async function removeMessage(id: string) {
+        try {
+            const r = await fetch(`/api/messages?id=${id}`, {
+                method: "DELETE"
+            });
+            if (r.ok) {
+                toast.success("Message deleted");
+            } else {
+                toast.error("Failed to delete message");
+            }
+            load();
+        } catch (e) {
+            toast.error("An error occurred while deleting");
+        }
     }
 
     return (
@@ -67,14 +76,18 @@ export default function Messages() {
             <div className="mt-5 space-y-3">
                 {
                     rows.map(x => <article key={x.id} className={`panel p-5 ${!x.isRead ? "border-indigo-200 bg-indigo-50/30" : ""}`}>
-                        <div className="flex flex-wrap justify-between gap-3"><div>
+                        <div className="flex flex-wrap justify-between gap-3"><div className="flex items-center gap-2">
                             <p className="font-semibold">{x.gmail}</p>
                             <p className="text-xs text-slate-500">{new Date(x.createdAt).toLocaleString()}</p>
                         </div>
-                            {
-                                !x.isRead &&
+                            <div className="flex gap-2">
+                                {!x.isRead &&
                                 <button onClick={() => read(x.id)} className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white">Mark read</button>
-                            }
+                                }
+                                <button onClick={() => removeMessage(x.id)} className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50">
+                                    <Trash2 className="h-3 w-3 inline mr-1" /> Delete
+                                </button>
+                            </div>
                         </div>
                         <p className="mt-4 whitespace-pre-wrap leading-7 text-slate-700">{x.message}</p></article>)}
                 {

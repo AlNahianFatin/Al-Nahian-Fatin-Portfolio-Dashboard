@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { issueTokens, verifyRefresh } from "../../../../lib/auth";
-import { handleError } from "../../../../lib/error-handler";
+import { AppError } from "../../../../lib/error-handler";
 
 export async function POST() {
   const c = await cookies();
@@ -14,7 +14,7 @@ export async function POST() {
     const id = await verifyRefresh(token);
 
     if (!id)
-      return handleError("User ID not found");
+      return NextResponse.json({ message: "User ID not found" }, { status: 404 });
 
     const tokens = await issueTokens(id);
 

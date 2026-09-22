@@ -23,7 +23,8 @@ model Profile {
   shortBio         String?
   aboutTitle       String?
   aboutDescription String?
-  profileImage     String?
+  imageUrl         String?
+  imagePublicId    String?
   location         String?
   availability     String?
   email            String?
@@ -44,18 +45,21 @@ model SocialLink {
 }
 
 model Education {
-  id          String    @id @default(uuid())
-  institution String
-  degree      String
-  field       String?
-  startDate   DateTime?
-  endDate     DateTime?
-  description String?
-  location    String?
-  sortOrder   Int       @default(0)
-  isActive    Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id            String    @id @default(uuid())
+  institution   String
+  degree        String
+  field         String
+  description   String?
+  location      String?
+  startDate     DateTime?
+  endDate       DateTime?
+  gpa           Decimal?
+  imageUrl      String?
+  imagePublicId String?
+  sortOrder     Int       @default(0)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Skill {
@@ -71,41 +75,49 @@ model Skill {
 }
 
 model Project {
-  id           String   @id @default(uuid())
-  title        String
-  description  String?
-  image        String?
-  githubUrl    String?
-  liveUrl      String?
-  technologies String[]
-  featured     Boolean  @default(false)
-  sortOrder    Int      @default(0)
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            String   @id @default(uuid())
+  title         String
+  description   String?
+  imageUrl      String?
+  imagePublicId String?
+  githubUrl     String?
+  liveUrl       String?
+  technologies  String[]
+  featured      Boolean  @default(false)
+  sortOrder     Int      @default(0)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+enum PublicationStatus {
+  ONGOING
+  COMPLETED
 }
 
 model Publication {
-  id              String    @id @default(uuid())
+  id              String            @id @default(uuid())
   title           String
+  status          PublicationStatus
   description     String?
   publisher       String?
   publicationDate DateTime?
   url             String?
-  image           String?
-  sortOrder       Int       @default(0)
-  isActive        Boolean   @default(true)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  imageUrl        String?
+  imagePublicId   String?
+  sortOrder       Int               @default(0)
+  isActive        Boolean           @default(true)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 }
 
 model Resume {
-  id         String   @id @default(uuid())
-  title      String
-  fileUrl    String
-  fileName   String?
-  isActive   Boolean  @default(true)
-  uploadedAt DateTime @default(now())
+  id           String   @id @default(uuid())
+  title        String
+  fileUrl      String
+  filePublicId String
+  isActive     Boolean  @default(true)
+  uploadedAt   DateTime @default(now())
 }
 
 model PortfolioSetting {

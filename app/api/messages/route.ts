@@ -72,3 +72,26 @@ export async function PATCH(req: Request) {
         return NextResponse.json({ message: "Unable to update messages." }, { status: 400 });
     }
 }
+
+export async function DELETE(req: Request) {
+    try {
+        await requireAdmin();
+
+        const u = new URL(req.url);
+        const id = u.searchParams.get("id");
+
+        if (!id) {
+            return NextResponse.json({ message: "Missing id" }, { status: 400 });
+        }
+
+        await prisma.message.delete({
+            where: { id }
+        });
+
+        return NextResponse.json({ ok: true });
+    }
+    catch (e) {
+        console.error(e);
+        return NextResponse.json({ message: "Unable to delete message." }, { status: 400 });
+    }
+}

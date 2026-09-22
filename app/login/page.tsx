@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { LockKeyhole } from "lucide-react";
+import { LockKeyhole, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -85,7 +86,6 @@ export default function Login() {
         {/* Email */}
         <label className="mt-7 block text-sm font-medium text-slate-700">
           Email
-
           <input
             required
             type="email"
@@ -99,7 +99,6 @@ export default function Login() {
                 : "border-slate-200 focus:border-indigo-500"
               }`}
           />
-
           {emailError && (
             <p className="mt-2 text-sm text-red-600">
               {emailError}
@@ -110,21 +109,28 @@ export default function Login() {
         {/* Password */}
         <label className="mt-4 block text-sm font-medium text-slate-700">
           Password
-
-          <input
-            required
-            type="password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setPasswordError("");
-            }}
-            className={`mt-2 w-full rounded-xl border px-4 py-3 outline-none ${passwordError
-                ? "border-red-500 focus:border-red-500"
-                : "border-slate-200 focus:border-indigo-500"
-              }`}
-          />
-
+          <div className="relative mt-2">
+            <input
+              required
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setPasswordError("");
+              }}
+              className={`w-full rounded-xl border px-4 py-3 pr-12 outline-none ${passwordError
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-slate-200 focus:border-indigo-500"
+                }`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
           {passwordError && (
             <p className="mt-2 text-sm text-red-600">
               {passwordError}
