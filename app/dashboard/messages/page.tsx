@@ -57,7 +57,7 @@ export default function Messages() {
                     <p className="text-sm text-indigo-600">Inbox</p>
                     <h1 className="text-3xl font-bold">Messages</h1>
                 </div>
-                <button onClick={all} className="rounded-xl bg-indigo-600 px-4 py-2.5 font-semibold text-white">
+                <button onClick={all} className="rounded-xl bg-indigo-600 px-4 py-2.5 font-semibold text-white hover:bg-indigo-600/80 hover:scale-105 hover:cursor-pointer transition-all">
                     <CheckCheck className="mr-2 inline h-4 w-4" />Mark all as read
                 </button>
             </div>
@@ -67,7 +67,7 @@ export default function Messages() {
                     <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search Gmail or message..." className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-3 outline-none" />
 
                 </div>
-                <select value={filter} onChange={e => setFilter(e.target.value)} className="rounded-xl border border-slate-200 bg-white px-4">
+                <select value={filter} onChange={e => setFilter(e.target.value)} className="rounded-xl border border-slate-200 bg-white px-4 hover:cursor-pointer">
                     <option value="all">All</option>
                     <option value="unread">Unread</option>
                     <option value="read">Read</option>
@@ -82,9 +82,9 @@ export default function Messages() {
                         </div>
                             <div className="flex gap-2">
                                 {!x.isRead &&
-                                <button onClick={() => read(x.id)} className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white">Mark read</button>
+                                    <button onClick={() => read(x.id)} className="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-600/80 hover:scale-105 hover:cursor-pointer transition-all">Mark read</button>
                                 }
-                                <button onClick={() => removeMessage(x.id)} className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50">
+                                <button onClick={() => removeMessage(x.id)} className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-400/80 hover:scale-105 hover:text-black hover:border-black hover:cursor-pointer transition-all">
                                     <Trash2 className="h-3 w-3 inline mr-1" /> Delete
                                 </button>
                             </div>

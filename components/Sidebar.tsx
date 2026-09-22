@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BarChart3, BriefcaseBusiness, FileText, GraduationCap, LayoutDashboard, LogOut, Mail, Settings, Sparkles, UserRound, Wrench, FileUser, BookMarked } from "lucide-react";
+import { FaUserTie } from "react-icons/fa";
 
 const groups = [
   ["Dashboard", "/dashboard", LayoutDashboard],
@@ -11,6 +12,7 @@ const groups = [
   ["Education", "/dashboard/content/education", GraduationCap],
   ["Skills", "/dashboard/content/skill", Wrench],
   ["Projects", "/dashboard/content/project", BriefcaseBusiness],
+  ["Experience", "/dashboard/content/experience", FaUserTie],
   ["Publications", "/dashboard/content/publication", BookMarked],
   ["Social Links", "/dashboard/content/socialLink", Sparkles],
   ["CV / Resume", "/dashboard/content/resume", FileText],
@@ -33,11 +35,10 @@ export function Sidebar() {
             const isActive = pathname === href;
             return (
               <Link key={href} href={href}
-                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${
-                  isActive
+                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${isActive
                     ? "bg-slate-100 text-slate-950 font-medium"
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
-                }`}>
+                  }`}>
                 <Icon className={`h-4 w-4 ${isActive ? "text-indigo-600" : ""}`} />{name}
               </Link>
             );
@@ -52,7 +53,7 @@ export function Sidebar() {
           });
           location.href = "/login"
         }
-      } className="mt-5 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-red-600 hover:bg-red-50">
+      } className="mt-5 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:cursor-pointer">
         <LogOut className="h-4 w-4" />Logout
       </button>
     </aside>

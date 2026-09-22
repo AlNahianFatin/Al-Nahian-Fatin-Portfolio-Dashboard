@@ -49,6 +49,7 @@ model Education {
   institution   String
   degree        String
   field         String
+  major         String?
   description   String?
   location      String?
   startDate     DateTime?
@@ -62,16 +63,24 @@ model Education {
   updatedAt     DateTime  @updatedAt
 }
 
+enum TechnicalSkillCategory {
+  LANGUAGE
+  WEB
+  SOFTWARE
+  DATABASE
+  TOOL
+}
+
 model Skill {
-  id        String   @id @default(uuid())
+  id        String                 @id @default(uuid())
   name      String
-  category  String?
+  category  TechnicalSkillCategory
   level     Int?
   icon      String?
-  sortOrder Int      @default(0)
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  sortOrder Int                    @default(0)
+  isActive  Boolean                @default(true)
+  createdAt DateTime               @default(now())
+  updatedAt DateTime               @updatedAt
 }
 
 model Project {
@@ -117,7 +126,18 @@ model Resume {
   fileUrl      String
   filePublicId String
   isActive     Boolean  @default(true)
-  uploadedAt   DateTime @default(now())
+  updatedAt    DateTime @default(now())
+}
+
+model Experience {
+  id        String    @id @default(uuid())
+  company   String
+  role      String
+  task      String?
+  startDate DateTime
+  endDate   DateTime?
+  isActive  Boolean   @default(true)
+  updatedAt DateTime  @default(now())
 }
 
 model PortfolioSetting {

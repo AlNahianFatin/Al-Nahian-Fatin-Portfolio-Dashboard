@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { prisma } from "./prisma";
 import { AppError } from "./error-handler";
+import { NextResponse } from "next/server";
 
 const enc = new TextEncoder();
 
@@ -64,16 +65,8 @@ export async function verifyAccess(token: string) {
     accessSecret()
   );
 
-  if (
-    result.payload.type !== "access" ||
-    !result.payload.sub
-  ) {
-    throw new AppError(
-      "Invalid access token",
-      401,
-      "general"
-    );
-  }
+  if (result.payload.type !== "access" || !result.payload.sub)
+    NextResponse.json({ message: "Invalid access token" }, { status: 400 });
 
   return result.payload.sub;
 }
@@ -84,16 +77,8 @@ export async function verifyRefresh(token: string) {
     refreshSecret()
   );
 
-  if (
-    result.payload.type !== "refresh" ||
-    !result.payload.sub
-  ) {
-    throw new AppError(
-      "Invalid refresh token",
-      401,
-      "general"
-    );
-  }
+  if (result.payload.type !== "refresh" || !result.payload.sub)
+    NextResponse.json({ message: "Invalid refresh token" }, { status: 400 });
 
   return result.payload.sub;
 }

@@ -94,14 +94,16 @@ export default function SettingsContent() {
                     </label>
 
                     <div className="mt-5 flex gap-2">
-                        {editing && (
-                            <>
-                                <button className="rounded-xl bg-indigo-600 px-5 py-2.5 font-semibold text-white">
-                                    Update setting
-                                </button>
-                                <button type="button" onClick={clearForm} className="rounded-xl border px-5 py-2.5 font-semibold text-slate-600">Clear</button>
-                            </>
-                        )}
+                        {
+                            editing && (
+                                <>
+                                    <button className="rounded-xl bg-indigo-600 px-5 py-2.5 font-semibold text-white hover:bg-indigo-600/80 hover:scale-105 hover:cursor-pointer transition-all">
+                                        Update setting
+                                    </button>
+                                    <button type="button" onClick={clearForm} className="rounded-xl border px-5 py-2.5 font-semibold text-slate-600 hover:bg-red-400/80 hover:text-black hover:border-black hover:scale-105 hover:cursor-pointer transition-all">Clear</button>
+                                </>
+                            )
+                        }
                     </div>
                     <p className="mt-3 text-sm text-slate-500">{status}</p>
                 </form>
@@ -117,7 +119,7 @@ export default function SettingsContent() {
                                     </div>
                                     <div className="flex gap-2">
                                         <button onClick={() => { setEditing(r.id); setKey(r.key); setValue(r.value) }}
-                                            className="rounded-lg border px-3 py-1.5 text-sm">Edit</button>
+                                            className="rounded-lg border px-3 py-1.5 text-sm hover:bg-indigo-600/80 hover:scale-105 hover:cursor-pointer transition-all">Edit</button>
                                     </div>
                                 </div>
                             </div>

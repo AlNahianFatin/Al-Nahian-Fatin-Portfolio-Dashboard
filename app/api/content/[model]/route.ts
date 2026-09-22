@@ -3,7 +3,7 @@ import { prisma } from "../../../../lib/prisma";
 import { requireAdmin } from "../../../../lib/auth";
 import cloudinary from "../../../../lib/cloudinary";
 
-const allowed = ["profile", "education", "skill", "project", "publication", "socialLink", "resume", "portfolioSetting"] as const;
+const allowed = ["profile", "education", "skill", "project", "experience", "publication", "socialLink", "resume", "portfolioSetting"] as const;
 
 type Model = typeof allowed[number];
 
@@ -20,7 +20,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ model: str
         if (!allowed.includes(m as Model))
             return NextResponse.json({ message: "Invalid model" }, { status: 400 });
 
-        const orderField = m === 'resume' ? 'uploadedAt' : 'updatedAt';
+        const orderField = 'updatedAt';
         const rows = await model(m).findMany({
             orderBy: {
                 [orderField]: "desc"
@@ -29,8 +29,9 @@ export async function GET(_: Request, { params }: { params: Promise<{ model: str
 
         return NextResponse.json({ rows });
     }
-    catch {
-        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    catch (e: any) {
+        console.log(e);
+        return NextResponse.json({ message: e.message || "Something went wrong" }, { status: 401 });
     }
 }
 
@@ -183,7 +184,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ model
 
         return NextResponse.json({ ok: true });
     }
-    catch {
+    catch (e) {
+        console.error(e)
         return NextResponse.json({ message: "Could not delete item." }, { status: 400 });
     }
 }
