@@ -10,7 +10,7 @@ export async function GET() {
             where: { isRead: false }
         });
 
-        return NextResponse.json({ count });
+        return NextResponse.json({ count }, { headers: { "Cache-Control": "no-store" } });
     }
     catch {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });

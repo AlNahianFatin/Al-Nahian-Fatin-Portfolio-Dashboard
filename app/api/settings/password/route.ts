@@ -4,7 +4,24 @@ import { prisma } from "../../../../lib/prisma";
 import { requireAdmin } from "../../../../lib/auth";
 import { AppError } from "../../../../lib/error-handler";
 
-export async function POST(req: Request) {
+export async function GET() {
+    try {
+        const admin = await requireAdmin();
+        return NextResponse.json({
+            admin: {
+                id: admin.id,
+                email: admin.email,
+                name: admin.name,
+                createdAt: admin.createdAt,
+                updatedAt: admin.updatedAt,
+            },
+        }, { headers: { "Cache-Control": "no-store" } });
+    } catch {
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+}
+
+export async function PUT(req: Request) {
     try {
         const admin = await requireAdmin();
 

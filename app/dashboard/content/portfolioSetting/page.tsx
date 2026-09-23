@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+const stamp = (value: string | Date | undefined) => value ? new Date(value).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : "—";
+
 export default function SettingsContent() {
     const [rows, setRows] = useState<any[]>([]);
     const [key, setKey] = useState("");
@@ -50,6 +52,7 @@ export default function SettingsContent() {
         });
 
         const d = await r.json();
+        
         if (!r.ok) {
             if (d.field) {
                 setErrors({ [d.field]: d.message });
@@ -116,10 +119,14 @@ export default function SettingsContent() {
                                     <div>
                                         <b>{r.key}</b>
                                         <p className="mt-1 text-sm text-slate-500">{r.value}</p>
+                                        <div className="mt-2 text-[11px] text-slate-400">
+                                            <p>Created: {stamp(r.createdAt)}</p>
+                                            <p>Updated: {stamp(r.updatedAt)}</p>
+                                        </div>
                                     </div>
                                     <div className="flex gap-2">
                                         <button onClick={() => { setEditing(r.id); setKey(r.key); setValue(r.value) }}
-                                            className="rounded-lg border px-3 py-1.5 text-sm hover:bg-indigo-600/80 hover:scale-105 hover:cursor-pointer transition-all">Edit</button>
+                                            className="rounded-xl border px-3 h-10 text-sm hover:bg-indigo-600/80 hover:scale-105 hover:cursor-pointer transition-all">Edit</button>
                                     </div>
                                 </div>
                             </div>
@@ -127,10 +134,6 @@ export default function SettingsContent() {
                     }
                 </div>
             </div>
-
-            {
-                // Delete modal removed as per request
-            }
         </main>
     )
 }

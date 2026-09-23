@@ -31,7 +31,7 @@ export async function GET(req: Request) {
             }, orderBy: { createdAt: "desc" }
         });
 
-        return NextResponse.json({ rows });
+        return NextResponse.json({ rows }, { headers: { "Cache-Control": "no-store" } });
     }
     catch {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });

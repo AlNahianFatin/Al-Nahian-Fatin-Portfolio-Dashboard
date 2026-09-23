@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 export default function Settings() {
     const [currentPass, setCurrentPass] = useState("");
@@ -21,6 +22,19 @@ export default function Settings() {
     const [status, setStatus] = useState("");
 
     const [busy, setBusy] = useState(false);
+    const [admin, setAdmin] = useState<any>(null);
+
+    const load = () => fetch("/api/settings/password", { cache: "no-store" })
+        .then(r => r.json())
+        .then(d => setAdmin(d.admin || null))
+        .catch(() => { });
+
+    useEffect(() => {
+        fetch("/api/settings/password", { cache: "no-store" })
+            .then(r => r.json())
+            .then(d => setAdmin(d.admin || null))
+            .catch(() => { });
+    }, []);
 
     async function save(e: React.FormEvent) {
         e.preventDefault();
@@ -36,7 +50,7 @@ export default function Settings() {
             const r = await fetch(
                 "/api/settings/password",
                 {
-                    method: "POST",
+                    method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                     },
@@ -64,15 +78,15 @@ export default function Settings() {
                 return;
             }
 
-            setStatus(
-                d.message || "Password updated successfully."
-            );
+            toast.success(d.message || "Saved successfully");
 
             setCurrentPass("");
             setNewPass("");
 
             setCurrentPassError("");
             setNewPassError("");
+
+            load();
         } catch (error) {
             console.error(error);
 
@@ -93,6 +107,17 @@ export default function Settings() {
             <h1 className="mt-1 text-3xl font-bold">
                 Account settings
             </h1>
+
+            {admin && (
+                <div className="panel mt-7 max-w-xl p-5">
+                    <p className="text-sm font-semibold">Admin account</p>
+                    <p className="mt-2 text-sm text-slate-600">{admin.name || "Administrator"} · {admin.email}</p>
+                    <div className="mt-3 text-xs text-slate-400">
+                        <p>Created: {new Date(admin.createdAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}</p>
+                        <p className="mt-1">Updated: {new Date(admin.updatedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}</p>
+                    </div>
+                </div>
+            )}
 
             <form
                 onSubmit={save}

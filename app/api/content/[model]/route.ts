@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import { requireAdmin } from "../../../../lib/auth";
 import cloudinary from "../../../../lib/cloudinary";
+import { revalidatePortfolio } from "../../../../lib/revalidatePortfolio";
 
 const allowed = ["profile", "education", "skill", "project", "experience", "publication", "socialLink", "resume", "portfolioSetting"] as const;
 
@@ -91,8 +92,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ model: 
         }
 
         delete body.id;
+        delete body.createdAt;
+        delete body.updatedAt;
+
+        for (const field of ["startDate", "endDate", "publicationDate"]) {
+            if (field in body && body[field] === "")
+                body[field] = null;
+        }
 
         const row = await model(m).create({ data: body });
+
+        // Fire-and-forget: let the live portfolio know its content changed.
+        revalidatePortfolio();
 
         return NextResponse.json({ row, message: "Saved successfully" });
     }
@@ -155,11 +166,23 @@ export async function PUT(req: Request, { params }: { params: Promise<{ model: s
         }
 
         const id = body.id;
+
         delete body.id;
+        delete body.createdAt;
+        delete body.updatedAt;
+
+        for (const field of ["startDate", "endDate", "publicationDate"]) {
+            if (field in body && body[field] === "")
+                body[field] = null;
+        }
 
         const row = await model(m).update({
             where: { id }, data: body
         });
+
+        // Fire-and-forget: let the live portfolio know its content changed.
+        revalidatePortfolio();
+
         return NextResponse.json({ row, message: "Updated successfully" });
     }
     catch (e) {
@@ -181,6 +204,9 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ model
         await model(m).delete({
             where: { id }
         });
+
+        // Fire-and-forget: let the live portfolio know its content changed.
+        revalidatePortfolio();
 
         return NextResponse.json({ ok: true });
     }

@@ -26,6 +26,8 @@ const technicalSkillCategories = [
 
 const labels = (s: string) => s.replace(/([A-Z])/g, " $1").replace(/^./, c => c.toUpperCase());
 
+const stamp = (value: string | Date | undefined) => value ? new Date(value).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : "—";
+
 export default function ContentEditor() {
   const { model } = useParams<{ model: string }>();
   const [rows, setRows] = useState<any[]>([]);
@@ -91,6 +93,22 @@ export default function ContentEditor() {
               setErrors(prev => ({ ...prev, [k]: `Sort order ${valNum} is already used by ${humanName}` }));
               hasError = true;
             }
+          }
+        }
+      }
+
+      if (k === "level") {
+        if (form[k] !== undefined && form[k] !== "") {
+          const valNum = parseInt(form[k]);
+
+          if (isNaN(valNum) || valNum < 1) {
+            setErrors(prev => ({ ...prev, [k]: "Skill level must be 1 or greater" }));
+            hasError = true;
+          }
+
+          if (isNaN(valNum) || valNum > 100) {
+            setErrors(prev => ({ ...prev, [k]: "Skill level must be 100 or lower" }));
+            hasError = true;
           }
         }
       }
@@ -268,6 +286,10 @@ export default function ContentEditor() {
                             <input type="number" min="1" value={val(k)} onChange={
                               e => setForm({ ...form, [k]: e.target.value })
                             } className={`w-full rounded-xl border px-3 py-2 outline-none focus:border-indigo-500 ${errors[k] ? "border-red-500" : "border-slate-200"}`} />
+                          ) : (k === "level") ? (
+                            <input type="number" min="1" value={val(k)} onChange={
+                              e => setForm({ ...form, [k]: e.target.value })
+                            } className={`w-full rounded-xl border px-3 py-2 outline-none focus:border-indigo-500 ${errors[k] ? "border-red-500" : "border-slate-200"}`} />
                           ) : isDate ? (
                             <input type="date" value={val(k)} onChange={
                               e => setForm({ ...form, [k]: e.target.value })
@@ -325,6 +347,12 @@ export default function ContentEditor() {
           </div>
 
           <p className="mt-3 text-sm text-slate-500">{status}</p>
+          {model === "profile" && rows[0] && (
+            <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-500">
+              <p>Created: {stamp(rows[0].createdAt)}</p>
+              <p className="mt-1">Last updated: {stamp(rows[0].updatedAt)}</p>
+            </div>
+          )}
         </form>
 
         {
@@ -347,6 +375,10 @@ export default function ContentEditor() {
                         <div>
                           <h3 className="font-semibold">{row.name || row.title || row.institution || row.platform || row.key || row.degree || row.company || "Item"}</h3>
                           <p className="mt-1 line-clamp-2 text-sm text-slate-500">{row.email || row.degree || row.description || row.category || row.url || row.value || row.degree || row.role || row.status}</p>
+                          <div className="mt-2 space-y-0.5 text-[11px] text-slate-400">
+                            <p>Created: {stamp(row.createdAt)}</p>
+                            <p>Updated: {stamp(row.updatedAt)}</p>
+                          </div>
                         </div>
                       </div>
                       <div className="flex gap-2">
