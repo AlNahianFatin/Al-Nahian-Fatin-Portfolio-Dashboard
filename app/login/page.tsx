@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { LockKeyhole, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -83,7 +82,6 @@ export default function Login() {
           Sign in to manage your portfolio.
         </p>
 
-        {/* Email */}
         <label className="mt-7 block text-sm font-medium text-slate-700">
           Email
           <input
@@ -95,8 +93,8 @@ export default function Login() {
               setEmailError("");
             }}
             className={`mt-2 w-full rounded-xl border px-4 py-3 outline-none ${emailError
-                ? "border-red-500 focus:border-red-500"
-                : "border-slate-200 focus:border-indigo-500"
+              ? "border-red-500 focus:border-red-500"
+              : "border-slate-200 focus:border-indigo-500"
               }`}
           />
           {emailError && (
@@ -106,7 +104,6 @@ export default function Login() {
           )}
         </label>
 
-        {/* Password */}
         <label className="mt-4 block text-sm font-medium text-slate-700">
           Password
           <div className="relative mt-2">
@@ -119,8 +116,8 @@ export default function Login() {
                 setPasswordError("");
               }}
               className={`w-full rounded-xl border px-4 py-3 pr-12 outline-none ${passwordError
-                  ? "border-red-500 focus:border-red-500"
-                  : "border-slate-200 focus:border-indigo-500"
+                ? "border-red-500 focus:border-red-500"
+                : "border-slate-200 focus:border-indigo-500"
                 }`}
             />
             <button
@@ -138,7 +135,6 @@ export default function Login() {
           )}
         </label>
 
-        {/* General error */}
         {generalError && (
           <p className="mt-4 text-center text-sm text-red-600">
             {generalError}

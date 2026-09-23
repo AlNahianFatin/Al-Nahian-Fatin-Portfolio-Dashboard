@@ -19,10 +19,8 @@ function formatDateTime(date: Date) {
 async function data(days: number) {
     const start = new Date();
 
-    // Start from today's 00:00:00
     start.setHours(0, 0, 0, 0);
 
-    // Go back days - 1 calendar days
     start.setDate(start.getDate() - days + 1);
 
     const [views, messages, latestViews, latestMessages] =

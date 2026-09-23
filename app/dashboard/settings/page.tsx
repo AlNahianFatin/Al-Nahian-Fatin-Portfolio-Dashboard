@@ -127,7 +127,6 @@ export default function Settings() {
                     Change password
                 </h2>
 
-                {/* Current Password */}
                 <label className="mt-5 block text-sm">
                     Current password
                     <div className="relative mt-1">
@@ -160,7 +159,6 @@ export default function Settings() {
                     )}
                 </label>
 
-                {/* New Password */}
                 <label className="mt-4 block text-sm">
                     New password
                     <div className="relative mt-1">
@@ -190,7 +188,6 @@ export default function Settings() {
                     }
                 </label>
 
-                {/* General Error */}
                 {
                     generalError && (
                         <p className="mt-4 text-sm text-red-600">
@@ -199,7 +196,6 @@ export default function Settings() {
                     )
                 }
 
-                {/* Success */}
                 {
                     status && (
                         <p className="mt-4 text-sm text-green-600">

@@ -38,7 +38,6 @@ export async function PUT(req: Request) {
             newPassword,
         } = await req.json();
 
-        // Validate current password
         if (!currentPassword) {
             throw new AppError(
                 "Current password is required.",
@@ -47,7 +46,6 @@ export async function PUT(req: Request) {
             );
         }
 
-        // Validate new password
         if (!newPassword) {
             throw new AppError(
                 "New password is required.",
@@ -64,7 +62,6 @@ export async function PUT(req: Request) {
             );
         }
 
-        // Check current password
         const passwordMatches = await bcrypt.compare(
             currentPassword,
             admin.passwordHash
@@ -78,7 +75,6 @@ export async function PUT(req: Request) {
             );
         }
 
-        // Don't allow the same password
         const samePassword = await bcrypt.compare(
             newPassword,
             admin.passwordHash

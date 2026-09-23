@@ -1,4 +1,4 @@
-# Fatin Portfolio Dashboard
+# Al Nahian Fatin Portfolio Dashboard
 
 Private admin dashboard for the portfolio. It uses the same PostgreSQL database/schema as the portfolio project.
 
@@ -20,13 +20,13 @@ Private admin dashboard for the portfolio. It uses the same PostgreSQL database/
 3. Set strong JWT secrets.
 4. Set `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `ADMIN_NAME`.
 5. Set `PORTFOLIO_URL` and `REVALIDATE_SECRET` (see "Live sync" below).
-6. `npm install`
-7. `npm run db:generate`
-8. `npm run db:push`
-9. `npm run db:seed`
-10. `npm run dev`
+6. Install dependencies: `npm install`
+7. Generate Prisma client: `npm run db:generate`
+8. Push schema: `npm run db:push`
+9. Seed sample content: `npm run db:seed`
+10. Start: `npm run dev`
 
-Dashboard: http://localhost:3001
+Dashboard: http://localhost:3000
 
 Important: the `Admin` record is shared with this database, while the public portfolio never exposes admin routes.
 

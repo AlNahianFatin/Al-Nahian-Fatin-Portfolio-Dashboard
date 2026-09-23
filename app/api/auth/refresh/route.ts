@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { issueTokens, verifyRefresh } from "../../../../lib/auth";
-import { AppError } from "../../../../lib/error-handler";
 
 export async function POST() {
   const c = await cookies();

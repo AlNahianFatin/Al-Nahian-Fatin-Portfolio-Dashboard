@@ -71,17 +71,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ model: 
                     body['imagePublicId'] = uploadResponse.public_id;
                 }
             } else {
-                // Handle Date fields to ensure ISO-8601 format
                 if (["startDate", "endDate", "publicationDate"].includes(key) && value) {
                     body[key] = new Date(value).toISOString();
                 }
-                // Convert "true"/"false" strings from FormData to actual booleans
                 else if (value === "true") {
                     body[key] = true;
                 } else if (value === "false") {
                     body[key] = false;
                 }
-                // Handle sortOrder, level and other integer fields
                 else if (["sortOrder", "level"].includes(key) && value !== "") {
                     const parsed = parseInt(value, 10);
                     body[key] = isNaN(parsed) ? 0 : parsed;
@@ -102,7 +99,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ model: 
 
         const row = await model(m).create({ data: body });
 
-        // Fire-and-forget: let the live portfolio know its content changed.
         revalidatePortfolio();
 
         return NextResponse.json({ row, message: "Saved successfully" });
@@ -145,17 +141,14 @@ export async function PUT(req: Request, { params }: { params: Promise<{ model: s
                     body['imagePublicId'] = uploadResponse.public_id;
                 }
             } else {
-                // Handle Date fields to ensure ISO-8601 format
                 if (["startDate", "endDate", "publicationDate"].includes(key) && value) {
                     body[key] = new Date(value).toISOString();
                 }
-                // Convert "true"/"false" strings from FormData to actual booleans
                 else if (value === "true") {
                     body[key] = true;
                 } else if (value === "false") {
                     body[key] = false;
                 }
-                // Handle sortOrder, level and other integer fields
                 else if (["sortOrder", "level"].includes(key) && value !== "") {
                     const parsed = parseInt(value, 10);
                     body[key] = isNaN(parsed) ? 0 : parsed;
@@ -180,7 +173,6 @@ export async function PUT(req: Request, { params }: { params: Promise<{ model: s
             where: { id }, data: body
         });
 
-        // Fire-and-forget: let the live portfolio know its content changed.
         revalidatePortfolio();
 
         return NextResponse.json({ row, message: "Updated successfully" });
@@ -205,7 +197,6 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ model
             where: { id }
         });
 
-        // Fire-and-forget: let the live portfolio know its content changed.
         revalidatePortfolio();
 
         return NextResponse.json({ ok: true });
