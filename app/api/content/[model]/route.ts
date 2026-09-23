@@ -99,7 +99,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ model: 
 
         const row = await model(m).create({ data: body });
 
-        revalidatePortfolio();
+        await revalidatePortfolio();
 
         return NextResponse.json({ row, message: "Saved successfully" });
     }
@@ -173,7 +173,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ model: s
             where: { id }, data: body
         });
 
-        revalidatePortfolio();
+        await revalidatePortfolio();
 
         return NextResponse.json({ row, message: "Updated successfully" });
     }
@@ -197,7 +197,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ model
             where: { id }
         });
 
-        revalidatePortfolio();
+        await revalidatePortfolio();
 
         return NextResponse.json({ ok: true });
     }

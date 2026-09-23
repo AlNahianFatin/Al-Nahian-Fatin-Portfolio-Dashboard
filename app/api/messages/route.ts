@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "../../../lib/auth";
 import { prisma } from "../../../lib/prisma";
+import { revalidatePortfolio } from "../../../lib/revalidatePortfolio";
 
 export async function GET(req: Request) {
     try {
@@ -66,6 +67,8 @@ export async function PATCH(req: Request) {
                 }
             });
         }
+        await revalidatePortfolio();
+
         return NextResponse.json({ ok: true });
     }
     catch {
@@ -87,6 +90,8 @@ export async function DELETE(req: Request) {
         await prisma.message.delete({
             where: { id }
         });
+
+        await revalidatePortfolio();
 
         return NextResponse.json({ ok: true });
     }

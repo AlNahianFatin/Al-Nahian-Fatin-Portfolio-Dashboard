@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "../../../../lib/prisma";
 import { requireAdmin } from "../../../../lib/auth";
 import { AppError } from "../../../../lib/error-handler";
+import { revalidatePortfolio } from "../../../../lib/revalidatePortfolio";
 
 export async function GET() {
     try {
@@ -105,6 +106,8 @@ export async function PUT(req: Request) {
                 passwordHash: hash,
             },
         });
+
+        await revalidatePortfolio();
 
         return NextResponse.json({
             message: "Password updated successfully.",
