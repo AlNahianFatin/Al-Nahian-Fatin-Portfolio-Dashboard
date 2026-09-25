@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Save } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Settings() {
@@ -204,7 +204,8 @@ export default function Settings() {
                     )
                 }
 
-                <button type="submit" disabled={busy} className="mt-5 rounded-xl bg-indigo-600 px-5 py-2.5 font-semibold text-white disabled:opacity-50 hover:bg-indigo-600/80 hover:scale-105 hover:cursor-pointer transition-all" >
+                <button type="submit" disabled={busy} className="flex flex-row mt-5 rounded-xl bg-indigo-600 px-5 py-2.5 font-semibold text-white disabled:opacity-50 hover:bg-indigo-600/80 hover:scale-105 hover:cursor-pointer transition-all" >
+                    <Save className="h-5 pr-2 pt-1.5" />
                     {busy ? "Updating..." : "Update password"}
                 </button>
             </form>

@@ -14,8 +14,18 @@ async function main() {
     update: { name: process.env.ADMIN_NAME || "Portfolio Admin" },
     create: { email, name: process.env.ADMIN_NAME || "Portfolio Admin", passwordHash }
   });
+  await prisma.portfolioSetting.upsert({
+    where: { key: "dashboardMetadataTitle" },
+    update: { value: `${process.env.ADMIN_NAME} portfolio dashboard` },
+    create: { key: "dashboardMetadataTitle", value: `${process.env.ADMIN_NAME} portfolio dashboard` }
+  });
+  await prisma.portfolioSetting.upsert({
+    where: { key: "dashboardMetadataDescription" },
+    update: { value: `Portfolio management dashboard of ${process.env.ADMIN_NAME}.` },
+    create: { key: "dashboardMetadataDescription", value: `Portfolio management dashboard of ${process.env.ADMIN_NAME}.` }
+  });
 
-  console.log(`Admin ready: ${email}`);
+  console.log(`Portfolio seed complete for: ${email}`);
 }
 
 main().finally(() =>

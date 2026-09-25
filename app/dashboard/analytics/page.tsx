@@ -1,135 +1,119 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { AnalyticsChart } from "../../../components/AnalyticsChart";
-import { prisma } from "../../../lib/prisma";
 
-function formatDateKey(date: Date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
+type ChartPoint = {
+    date: string;
+    views: number;
+    messages: number;
+};
 
-    return `${year}-${month}-${day}`;
+type ViewRow = {
+    id: string;
+    createdAt: string;
+    date: string;
+};
+
+type MessageRow = {
+    id: string;
+    gmail: string;
+    createdAt: string;
+};
+
+type RangeData = {
+    chart: ChartPoint[];
+    latestViews: ViewRow[];
+    latestMessages: MessageRow[];
+};
+
+type AnalyticsResponse = {
+    d7: RangeData;
+    d15: RangeData;
+};
+
+function stamp(value: string) {
+    return new Date(value).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
 }
 
-function formatDateTime(date: Date) {
-    return new Date(date).toLocaleString("en-BD", {
-        dateStyle: "medium",
-        timeStyle: "short",
-    });
-}
+export default function Analytics() {
+    const [data, setData] = useState<AnalyticsResponse | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
-async function data(days: number) {
-    const start = new Date();
+    useEffect(() => {
+        let cancelled = false;
 
-    start.setHours(0, 0, 0, 0);
+        async function load() {
+            try {
+                const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    start.setDate(start.getDate() - days + 1);
+                const res = await fetch(`/api/dashboard/analytics?timeZone=${encodeURIComponent(timeZone)}`,
+                    { cache: "no-store" }
+                );
 
-    const [views, messages, latestViews, latestMessages] =
-        await Promise.all([
-            prisma.view.findMany({
-                where: {
-                    createdAt: {
-                        gte: start,
-                    },
-                },
-                select: {
-                    createdAt: true,
-                },
-            }),
+                if (!res.ok)
+                    throw new Error("Request failed");
 
-            prisma.message.findMany({
-                where: {
-                    createdAt: {
-                        gte: start,
-                    },
-                },
-                select: {
-                    createdAt: true,
-                },
-            }),
+                const json: AnalyticsResponse = await res.json();
 
-            prisma.view.findMany({
-                orderBy: {
-                    createdAt: "desc",
-                },
-                take: 8,
-                select: {
-                    id: true,
-                    createdAt: true,
-                    date: true,
-                },
-            }),
+                if (!cancelled) {
+                    setData(json);
+                    setError(false);
+                }
+            }
+            catch (e) {
+                console.error("Failed to load analytics", e);
 
-            prisma.message.findMany({
-                orderBy: {
-                    createdAt: "desc",
-                },
-                take: 8,
-                select: {
-                    id: true,
-                    gmail: true,
-                    createdAt: true,
-                },
-            }),
-        ]);
+                if (!cancelled)
+                    setError(true);
+            }
+            finally {
+                if (!cancelled)
+                    setLoading(false);
+            }
+        }
 
-    const chart = [];
+        load();
 
-    for (let i = 0; i < days; i++) {
-        const d = new Date(start);
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
-        d.setDate(start.getDate() + i);
-
-        const key = formatDateKey(d);
-
-        const viewCount = views.filter(
-            (view) => formatDateKey(view.createdAt) === key
-        ).length;
-
-        const messageCount = messages.filter(
-            (message) => formatDateKey(message.createdAt) === key
-        ).length;
-
-        chart.push({
-            date: `${String(d.getMonth() + 1).padStart(2, "0")}/${String(
-                d.getDate()
-            ).padStart(2, "0")}`,
-            views: viewCount,
-            messages: messageCount,
-        });
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-transparent">Loading analytics...&nbsp;
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+            </div>
+        );
     }
 
-    return {
-        chart,
-        latestViews,
-        latestMessages,
-    };
-}
+    if (error || !data) {
+        return (
+            <div className="p-8">
+                <p className="text-slate-500">Failed to load analytics.</p>
+            </div>
+        );
+    }
 
-export default async function Analytics() {
-    const d7 = await data(7);
-    const d15 = await data(15);
+    const { d7, d15 } = data;
 
     return (
         <main className="p-5 md:p-8">
             <p className="text-sm text-indigo-600">Insights</p>
 
-            <h1 className="mt-1 text-3xl font-bold">
-                Analytics
-            </h1>
+            <h1 className="mt-1 text-3xl font-bold">Analytics</h1>
 
             <div className="mt-7 grid gap-6 xl:grid-cols-2">
                 <div className="panel p-5">
-                    <h2 className="font-bold">
-                        Last 7 days
-                    </h2>
+                    <h2 className="font-bold">Last 7 days</h2>
 
                     <AnalyticsChart data={d7.chart} />
                 </div>
 
                 <div className="panel p-5">
-                    <h2 className="font-bold">
-                        Last 15 days
-                    </h2>
+                    <h2 className="font-bold">Last 15 days</h2>
 
                     <AnalyticsChart data={d15.chart} />
                 </div>
@@ -137,62 +121,45 @@ export default async function Analytics() {
 
             <div className="mt-6 grid gap-6 xl:grid-cols-2">
                 <div className="panel p-5">
-                    <h2 className="font-bold">
-                        Recent views
-                    </h2>
+                    <h2 className="font-bold">Recent views</h2>
 
                     <div className="mt-4 divide-y divide-slate-100">
-                        {d7.latestViews.map((view) => (
-                            <div
-                                key={view.id}
-                                className="flex justify-between gap-3 py-3 text-xs"
-                            >
-                                <span className="text-slate-600">
-                                    View recorded
-                                </span>
+                        {
+                            d7.latestViews.map((view) => (
+                                <div key={view.id} className="flex justify-between gap-3 py-3 text-xs">
+                                    <span className="text-slate-600">View recorded</span>
 
-                                <span className="text-slate-400">
-                                    Viewed{" "}
-                                    {formatDateTime(view.createdAt)}
-                                </span>
-                            </div>
-                        ))}
+                                    <span className="text-slate-400">Viewed{" "}{stamp(view.createdAt)}</span>
+                                </div>
+                            ))
+                        }
 
-                        {!d7.latestViews.length && (
-                            <p className="py-4 text-sm text-slate-400">
-                                No views recorded yet.
-                            </p>
-                        )}
+                        {
+                            !d7.latestViews.length && (
+                                <p className="py-4 text-sm text-slate-400">No views recorded yet.</p>
+                            )
+                        }
                     </div>
                 </div>
 
                 <div className="panel p-5">
-                    <h2 className="font-bold">
-                        Recent messages
-                    </h2>
+                    <h2 className="font-bold">Recent messages</h2>
 
                     <div className="mt-4 divide-y divide-slate-100">
-                        {d7.latestMessages.map((message) => (
-                            <div
-                                key={message.id}
-                                className="flex justify-between gap-3 py-3 text-xs"
-                            >
-                                <span className="truncate text-slate-600">
-                                    {message.gmail}
-                                </span>
+                        {
+                            d7.latestMessages.map((message) => (
+                                <div key={message.id} className="flex justify-between gap-3 py-3 text-xs">
+                                    <span className="truncate text-slate-600">{message.gmail}</span>
 
-                                <span className="shrink-0 text-slate-400">
-                                    Sent{" "}
-                                    {formatDateTime(message.createdAt)}
-                                </span>
-                            </div>
-                        ))}
+                                    <span className="shrink-0 text-slate-400">Sent{" "}{stamp(message.createdAt)}</span>
+                                </div>
+                            ))}
 
-                        {!d7.latestMessages.length && (
-                            <p className="py-4 text-sm text-slate-400">
-                                No messages yet.
-                            </p>
-                        )}
+                        {
+                            !d7.latestMessages.length && (
+                                <p className="py-4 text-sm text-slate-400">No messages yet.</p>
+                            )
+                        }
                     </div>
                 </div>
             </div>

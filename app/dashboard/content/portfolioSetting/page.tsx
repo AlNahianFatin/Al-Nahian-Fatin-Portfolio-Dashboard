@@ -1,4 +1,5 @@
 "use client";
+import { Eraser, Pencil, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -52,7 +53,7 @@ export default function SettingsContent() {
         });
 
         const d = await r.json();
-        
+
         if (!r.ok) {
             if (d.field) {
                 setErrors({ [d.field]: d.message });
@@ -100,10 +101,12 @@ export default function SettingsContent() {
                         {
                             editing && (
                                 <>
-                                    <button className="rounded-xl bg-indigo-600 px-5 py-2.5 font-semibold text-white hover:bg-indigo-600/80 hover:scale-105 hover:cursor-pointer transition-all">
-                                        Update setting
+                                    <button className="flex flex-row rounded-xl bg-indigo-600 px-5 py-2.5 font-semibold text-white hover:bg-indigo-600/80 hover:scale-105 hover:cursor-pointer transition-all">
+                                        <Save className="h-5 pr-2 pt-1.5" />Update setting
                                     </button>
-                                    <button type="button" onClick={clearForm} className="rounded-xl border px-5 py-2.5 font-semibold text-slate-600 hover:bg-red-400/80 hover:text-black hover:border-black hover:scale-105 hover:cursor-pointer transition-all">Clear</button>
+                                    <button type="button" onClick={clearForm} className="flex flex-row rounded-xl border px-5 py-2.5 font-semibold text-slate-600 hover:bg-red-400/80 hover:text-black hover:border-black hover:scale-105 hover:cursor-pointer transition-all">
+                                        <Eraser className="h-5 pr-2 pt-1.5" />Clear
+                                    </button>
                                 </>
                             )
                         }
@@ -126,7 +129,9 @@ export default function SettingsContent() {
                                     </div>
                                     <div className="flex gap-2">
                                         <button onClick={() => { setEditing(r.id); setKey(r.key); setValue(r.value) }}
-                                            className="rounded-xl border px-3 h-10 text-sm hover:bg-indigo-600/80 hover:scale-105 hover:cursor-pointer transition-all">Edit</button>
+                                            className="flex flex-row rounded-xl border px-3 py-1.5 h-10 text-sm hover:bg-indigo-600/80 hover:scale-105 hover:cursor-pointer transition-all">
+                                            <Pencil className="h-5 pr-2 pt-1.5" />Edit
+                                        </button>
                                     </div>
                                 </div>
                             </div>
