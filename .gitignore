@@ -34,9 +34,6 @@ yarn-error.log*
 .env*
 !.env.example
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -46,4 +43,6 @@ next-env.d.ts
 
 # development files
 .vscode
-.vercel
+
+# local files
+/public/PortfolioDashboardLogo.svg
