@@ -285,8 +285,7 @@ This project is currently without an explicit license file.
 
 ## 📞 Support & Contact
 
--   🐛 Issues: If you find any bugs or have suggestions, please open an issue on [GitHub Issues](https://github.com/AlNahianFatin/Al-Nahian-Fatin-Portfolio-Dashboard/issues).
-[Email](mailto:fatinnahian@gmail.com)
+-   🐛 Issues: If you find any bugs or have suggestions, please open an issue on [GitHub Issues](https://github.com/AlNahianFatin/Al-Nahian-Fatin-Portfolio-Dashboard/issues) or send me an [Email](mailto:fatinnahian@gmail.com).
 
 ---
 
