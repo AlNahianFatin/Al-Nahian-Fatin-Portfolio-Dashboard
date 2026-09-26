@@ -38,39 +38,6 @@ This repository is a sophisticated web application designed to empower individua
 
 ![Analytics Page](public/Al-Nahian-Fatin-Portfolio-Dashboard-Analytics-Page.png)
 
-<!-- ## 🛠️ Tech Stack
-
-**Frontend:**
-
-![Next.js](https://img.shields.io/badge/Next.js-Black?style=for-the-badge&logo=next.js&logoColor=white)
-
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-
-![Shadcn UI](https://img.shields.io/badge/shadcnui-161618?style=for-the-badge&logo=shadcn-ui&logoColor=white)
-
-**Backend:**
-
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
-
-![Next.js API Routes](https://img.shields.io/badge/Next.js%20API-Black?style=for-the-badge&logo=next.js&logoColor=white)
-
-![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=prisma&logoColor=white)
-
-![NextAuth.js](https://img.shields.io/badge/NextAuth.js-F8D210?style=for-the-badge&logo=next.js&logoColor=black)
-
-![Cloudinary](https://img.shields.io/badge/cloudinary-F8D210?style=for-the-badge&logo=cloudinary&logoColor=black)
-
-**Database:**
-
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-
-**DevOps:**
-![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white) -->
-
 ## 🛠️ Tech Stack
 
 ### **Frontend:**
