@@ -65,6 +65,13 @@ export default function SettingsContent() {
             return;
         }
 
+        if (key === "dashboardMetadataTitle")
+            document.title = value || document.title;
+        else if (key === "dashboardMetadataDescription" && value) {
+            const meta = document.querySelector('meta[name="description"]');
+            if (meta) meta.setAttribute("content", value);
+        }
+
         toast.success(d.message || "Saved successfully");
         clearForm();
         load();
