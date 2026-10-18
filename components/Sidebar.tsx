@@ -337,7 +337,6 @@ function NavigationGroup({
             return (
               <SidebarMenuItem key={url}>
                 <SidebarMenuButton
-
                   isActive={active}
                   tooltip={{
                     children: title,
